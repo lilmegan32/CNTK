@@ -1,24 +1,19 @@
+//JNI defines UNUSED macro as well, undefining it so it doesn't conflict with CNTK's
+%{
+#undef UNUSED
+%}
+
 %include "managed_languages/header.i"
-%include <arrays_csharp.i>
 %include "managed_languages/shared_ptrs.i"
 
-SWIG_STD_VECTOR_ENHANCED(size_t)
 %template(SizeTVector) std::vector<size_t>;
-SWIG_STD_VECTOR_ENHANCED(double)
 %template(DoubleVector) std::vector<double>;
-SWIG_STD_VECTOR_ENHANCED(float)
 %template(FloatVector) std::vector<float>;
-SWIG_STD_VECTOR_ENHANCED(CNTK::Variable)
 %template(VariableVector) std::vector<CNTK::Variable>;
-SWIG_STD_VECTOR_ENHANCED(CNTK::Axis)
 %template(AxisVector) std::vector<CNTK::Axis>;
-SWIG_STD_VECTOR_ENHANCED(std::shared_ptr<CNTK::NDArrayView>)
 %template(NDArrayViewPtrVector) std::vector<std::shared_ptr<CNTK::NDArrayView>>;
-SWIG_STD_VECTOR_ENHANCED(bool)
 %template(BoolVector) std::vector<bool>;
-SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %template(DeviceDescriptorVector) std::vector<CNTK::DeviceDescriptor>;
-
 %include "managed_languages/templates.i"
 
 %include "managed_languages/defines.i"
@@ -28,102 +23,47 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %include "CNTK_ExceptionHandling.i"
 
 %include "managed_languages/class_directives/DeviceDescriptor.i"
-%typemap(cscode) CNTK::DeviceDescriptor %{
+%typemap(javacode) CNTK::DeviceDescriptor %{
 
-    public int Id
-    {
-        get { return (int)GetId(); }
-    }
 
-    public DeviceKind Type
-    {
-        get { return GetDeviceType(); }
-    }
-
-    public static DeviceDescriptor CPUDevice
-    {
-        get { return GetCPUDevice(); }
-    }
-
-    public static DeviceDescriptor GPUDevice(int deviceId)
+    /*public static DeviceDescriptor GPUDevice(int deviceId)
     {
         if (deviceId < 0)
         {
             throw new System.ArgumentException("The paraemter deviceId should not be a negative value");
         }
         return GPUDevice((uint)deviceId);
+    }*/
+
+    public java.util.ArrayList<DeviceDescriptor> getAllDevices() {
+        DeviceDescriptorVector devices = GetAllDevices();
+        java.util.ArrayList<DeviceDescriptor> ret = new java.util.ArrayList<DeviceDescriptor>((int)devices.size());
+        for (int i = 0; i < devices.size(); ++i){
+            ret.add(devices.get(i));
+        }
+        return ret;
     }
 
-    public static System.Collections.Generic.IList<DeviceDescriptor> AllDevices()
-    {
-        var deviceVector = GetAllDevices();
-        // The CopyTo is to ensure the elements in the deviceVector can live beyond deviceVector itself.
-        var deviceArray = new DeviceDescriptor[deviceVector.Count];
-        deviceVector.CopyTo(deviceArray);
-        var deviceList = new System.Collections.Generic.List<DeviceDescriptor>(deviceArray);
-        return deviceList;
-    }
-
-    public override bool Equals(System.Object obj)
-    {
-        // If parameter is null return false.
-        if (obj == null)
-        {
-            return false;
-        }
-
-        // If parameter cannot be cast to Point return false.
-        DeviceDescriptor p = obj as DeviceDescriptor;
-        if ((System.Object)p == null)
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        DeviceDescriptor p = (DeviceDescriptor)o;
+        if (p == null) return false;
         return CNTKLib.AreEqualDeviceDescriptor(this, p);
     }
 
-    public bool Equals(DeviceDescriptor p)
-    {
-        // If parameter is null return false:
-        if ((object)p == null)
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
+    public boolean equals(DeviceDescriptor p) {
+        if (p == null) return false;
         return CNTKLib.AreEqualDeviceDescriptor(this, p);
     }
 
-    public static bool operator ==(DeviceDescriptor first, DeviceDescriptor second)
-    {
-        // If both are null, or both are same instance, return true.
-        if (System.Object.ReferenceEquals(first, second))
-        {
-            return true;
-        }
-
-        // If one is null, but not both, return false.
-        if (((object)first == null) || ((object)second == null))
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
-        return CNTKLib.AreEqualDeviceDescriptor(first, second);
+    @Override
+    public int hashCode() {
+        return GetDeviceType().hashCode();
     }
 
-    public static bool operator !=(DeviceDescriptor first, DeviceDescriptor second)
-    {
-        return !(first == second);
-    }
-
-    public override int GetHashCode()
-    {
-        return this.GetDeviceType().GetHashCode();
-    }
-
-    public static void SetExcludedDevices(System.Collections.Generic.IEnumerable<DeviceDescriptor> excluded)
+    /*public static void SetExcludedDevices(System.Collections.Generic.IEnumerable<DeviceDescriptor> excluded)
     {
         var excludeVector = new DeviceDescriptorVector();
         foreach (var element in excluded)
@@ -131,197 +71,95 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
             excludeVector.Add(element);
         }
         _SetExcludedDevices(excludeVector);
-    }
+    }*/
 %}
 
 %include "managed_languages/class_directives/Axis.i"
-%typemap(cscode) CNTK::Axis %{
+%typemap(javacode) CNTK::Axis %{
 
-    public string Name
-    {
-        get 
-        {
-            return GetName();
-        }
-    }
-
-    public bool IsStatic
-    {
-        get 
-        {
-            return IsStaticAxis();
-        }
-    }
-
-    public bool IsDynamic
-    {
-        get 
-        {
-            return IsDynamicAxis();
-        }
-    }
-
-    public bool IsOrdered
-    {
-        get 
-        {
-            return IsOrderedAxis();
-        }
-    }
-
-    public override bool Equals(System.Object obj)
-    {
-        // If parameter is null return false.
-        if (obj == null)
-        {
-            return false;
-        }
-
-        // If parameter cannot be cast to Point return false.
-        Axis p = obj as Axis;
-        if ((System.Object)p == null)
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Axis p = (Axis)o;
+        if (p == null) return false;
         return CNTKLib.AreEqualAxis(this, p);
     }
 
-    public bool Equals(Axis p)
-    {
-        // If parameter is null return false:
-        if ((object)p == null)
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
+    public boolean equals(Axis p) {
+        if (p == null) return false;
         return CNTKLib.AreEqualAxis(this, p);
     }
 
-    public static bool operator ==(Axis first, Axis second)
-    {
-        // If both are null, or both are same instance, return true.
-        if (System.Object.ReferenceEquals(first, second))
-        {
-            return true;
-        }
-
-        // If one is null, but not both, return false.
-        if (((object)first == null) || ((object)second == null))
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
-        return CNTKLib.AreEqualAxis(first, second);
-    }
-
-    public static bool operator !=(Axis first, Axis second)
-    {
-        return !(first == second);
-    }
-
-    public override int GetHashCode()
-    {
-        if (this.IsDynamicAxis())
-        {
-            return this.GetName().GetHashCode();
-        }
-        else
-        {
-            return this.StaticAxisIndex().GetHashCode();
+    @Override
+    public int hashCode() {
+        if (this.IsDynamicAxis()) {
+            return GetName().hashCode();
+        } else {
+            return this.StaticAxisIndex();
         }
     }
 %}
 
 %include "managed_languages/class_directives/Function.i"
-
 // Customize type mapping for modelBuffer, used by Load
+// template taken from various.i
 %apply char* INPUT { char* modelBuffer }
-%typemap(ctype) (char* modelBuffer) "char*"
-%typemap(imtype) (char* modelBuffer) "byte[]"
-%typemap(cstype) (char* modelBuffer) "byte[]"
+%typemap(jni) (char* modelBuffer) "jbyteArray"
+%typemap(jtype) (char* modelBuffer) "byte[]"
+%typemap(jstype) (char* modelBuffer) "byte[]"
+%typemap(in) (char* modelBuffer) {
+  $1 = (char *) JCALL2(GetByteArrayElements, jenv, $input, 0); 
+}
 
-%typemap(cscode) CNTK::Function %{
+%typemap(argout) (char* modelBuffer) {
+  JCALL3(ReleaseByteArrayElements, jenv, $input, (jbyte *) $1, 0);
+}
+
+%typemap(javain) (char* modelBuffer) "$javainput"
+
+/* Prevent default freearg typemap from being used */
+%typemap(freearg) (char* modelBuffer) ""
+
+%typemap(javacode) CNTK::Function %{
 
     public static Function Load(byte[] modelBuffer, DeviceDescriptor computeDevice)
     {
-        return Load(modelBuffer, (uint)modelBuffer.Length, computeDevice);
+        return Load(modelBuffer, (long)modelBuffer.length, computeDevice);
     }
 
-    public string Name
-    {
-        get 
-        {
-            return GetName();
+    // TODO: look at C# implementation and make it look more like that
+    private VariableVector argumentVector;
+    private VariableVector outputVector;
+    private java.util.ArrayList<Variable> argumentList;
+    private java.util.ArrayList<Variable> outputList;
+
+    private UnorderedMapVariableValuePtr outMap = new UnorderedMapVariableValuePtr();
+
+    public java.util.ArrayList<Variable> getOutputs() {
+        if (outputVector == null) {
+            outputVector = GetOutputs();
+            outputList = new java.util.ArrayList<Variable>((int)outputVector.size());
+            for (int i = 0; i < outputVector.size(); ++i){
+                outputList.add(outputVector.get(i));
+            }
         }
+        return outputList;
     }
 
-    public string Uid
-    {
-        get 
-        {
-            return GetUid();
+
+    public java.util.ArrayList<Variable> getArguments() {
+        if (argumentVector == null) {
+            argumentVector = GetArguments();
+            argumentList = new java.util.ArrayList<Variable>((int)argumentVector.size());
+            for (int i = 0; i < argumentVector.size(); ++i){
+                argumentList.add(argumentVector.get(i));
+            }
         }
+        return argumentList;
     }
 
-    public Function RootFunction
-    {
-        get { return GetRootFunction(); }
-    }
-
-    public System.Collections.Generic.IList<Variable> Outputs
-    {
-        get {
-            var varVector = GetOutputs();
-            var varArray = new Variable[varVector.Count];
-            // The CopyTo is to ensure that elements in varVector live beyond the lifecycle of varVector.
-            varVector.CopyTo(varArray);
-            var varList = new System.Collections.Generic.List<Variable>(varArray);
-            return varList;
-        }
-    }
-
-    public Variable Output
-    {
-        get { return GetOutput(); }
-    }
-
-    public string OpName
-    {
-        get { return GetOpName(); }
-    }
-
-    public bool IsComposite
-    {
-        get { return _IsComposite(); }
-    }
-
-    public bool IsPrimitive
-    {
-        get { return _IsPrimitive(); }
-    }
-
-    public bool IsBlock
-    {
-        get { return _IsBlock(); }
-    }
-
-    public System.Collections.Generic.IList<Variable> Arguments
-    {
-        get {
-            var varVector = GetArguments();
-            var varArray = new Variable[varVector.Count];
-            // The CopyTo is to ensure that elements in varVector live beyond the lifecycle of varVector.
-            varVector.CopyTo(varArray);
-            var varList = new System.Collections.Generic.List<Variable>(varArray);
-            return varList;
-        }
-    }
-
-    public System.Collections.Generic.IList<Variable> Inputs
+    /*public System.Collections.Generic.IList<Variable> Inputs
     {
         get {
             var varVector = GetInputs();
@@ -331,40 +169,39 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
             var varList = new System.Collections.Generic.List<Variable>(varArray);
             return varList;
         }
-    }
+    }*/
 
-    public static Function Combine(System.Collections.Generic.IEnumerable<Variable> operands)
-    {
-        var varVect = new VariableVector();
-        foreach (var v in operands)
+    public static Function Combine(java.util.ArrayList<Variable> outputVariable) {
+        VariableVector varVect = new VariableVector();
+        for (int i = 0; i < outputVariable.size(); ++i)
         {
-            varVect.Add(v);
+            varVect.add(varVect.get(i));
         }
         return CNTKLib.Combine(varVect);
     }
 
-    public static Function AsComposite(Function rootFunction, string name = "")
+    /*public static Function AsComposite(Function rootFunction, string name = "")
     {
         return CNTKLib.AsComposite(rootFunction, name);
-    }
+    }*/
 
-    public static Function Alias(Variable operand, string name = "")
+    /*public static Function Alias(Variable operand, string name = "")
     {
         return CNTKLib.Alias(operand, name);
-    }
+    }*/
 
-    // For C# Eval, default ParameterCloningMethod is share.
+    /*// For C# Eval, default ParameterCloningMethod is share.
     public Function Clone(ParameterCloningMethod parameterCloneMethod = ParameterCloningMethod.Share)
     {
         return _Clone(ParameterCloningMethod.Share);
-    }
+    }*/
 
-    public void Evaluate(System.Collections.Generic.IDictionary<Variable, Value> inputs, System.Collections.Generic.IDictionary<Variable, Value> outputs, DeviceDescriptor computeDevice)
+    /*public void Evaluate(System.Collections.Generic.IDictionary<Variable, Value> inputs, System.Collections.Generic.IDictionary<Variable, Value> outputs, DeviceDescriptor computeDevice)
     {
         Evaluate(inputs, outputs, false, computeDevice);
-    }
+    }*/
 
-    public void Evaluate(System.Collections.Generic.IDictionary<Variable, Value> inputs, System.Collections.Generic.IDictionary<Variable, Value> outputs, bool createPersistentOutputValues, DeviceDescriptor computeDevice)
+    /*public void Evaluate(System.Collections.Generic.IDictionary<Variable, Value> inputs, System.Collections.Generic.IDictionary<Variable, Value> outputs, bool createPersistentOutputValues, DeviceDescriptor computeDevice)
     {
         // Evaluate the rootFunction.
         var inMap = new UnorderedMapVariableValuePtr();
@@ -393,9 +230,9 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
                 outputs[p.Key] = p.Value;
             }
         }
-    }
+    }*/
 
-    public System.Collections.Generic.IList<Function> FindAllWithName(string name, bool nestedSearchInsideBlockFunction = false)
+    /*public System.Collections.Generic.IList<Function> FindAllWithName(string name, bool nestedSearchInsideBlockFunction = false)
     {
         var funcPtrVector = _FindAllWithName(name, nestedSearchInsideBlockFunction);
         var funcPtrList = new System.Collections.Generic.List<Function>(funcPtrVector.Count);
@@ -405,34 +242,13 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
             funcPtrList.Add(funcPtrVector[i]);
         }
         return funcPtrList;
-    }
+    }*/
 %}
 
 %include "managed_languages/class_directives/Variable.i"
+%typemap(javacode) CNTK::Variable %{
 
-%typemap(cscode) CNTK::Variable %{
-
-    public NDShape Shape
-    {
-        get { return GetShape(); }
-    }
-
-    public string Name
-    {
-        get { return GetName(); }
-    }
-
-    public VariableKind Kind
-    {
-        get { return GetVariableKind(); }
-    }
-
-    public DataType DataType
-    {
-        get { return GetDataType(); }
-    }
-
-    public System.Collections.Generic.IList<Axis> DynamicAxes
+    /*public System.Collections.Generic.IList<Axis> DynamicAxes
     {
         get {
             var axisVector = GetDynamicAxes();
@@ -442,186 +258,74 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
             var axisList = new System.Collections.Generic.List<Axis>(axisArray);
             return axisList;
         }
-    }
+    }*/
 
-    public bool IsSparse
-    {
-        get { return _IsSparse(); }
-    }
-
-    public bool IsInput
-    {
-        get { return _IsInput(); }
-    }
-
-    public bool IsOutput
-    {
-        get { return _IsOutput(); }
-    }
-
-    public bool IsParameter
-    {
-        get { return _IsParameter(); }
-    }
-
-    public bool IsConstant
-    {
-        get { return _IsConstant(); }
-    }
-
-    public bool IsPlaceholder
-    {
-        get { return _IsPlaceholder(); }
-    }
-
-    public Function Owner
-    {
-        get { return GetOwner(); }
-    }
-
-    public override bool Equals(System.Object obj)
-    {
-        // If parameter is null return false.
-        if (obj == null)
-        {
-            return false;
-        }
-
-        // If parameter cannot be cast to Point return false.
-        Variable p = obj as Variable;
-        if ((System.Object)p == null)
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Variable p = (Variable)o;
+        if (p == null) return false;
         return CNTKLib.AreEqualVariable(this, p);
     }
 
-    public bool Equals(Variable p)
-    {
-        // If parameter is null return false:
-        if ((object)p == null)
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
+    public boolean equals(Variable p) {
+        if (p == null) return false;
         return CNTKLib.AreEqualVariable(this, p);
     }
 
-    public static bool operator ==(Variable first, Variable second)
-    {
-        // If both are null, or both are same instance, return true.
-        if (System.Object.ReferenceEquals(first, second))
-        {
-            return true;
-        }
-
-        // If one is null, but not both, return false.
-        if (((object)first == null) || ((object)second == null))
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
-        return CNTKLib.AreEqualVariable(first, second);
-    }
-
-    public static bool operator !=(Variable first, Variable second)
-    {
-        return !(first == second);
-    }
-
-    public override int GetHashCode()
-    {
-        // Todo: the hash value in C++ is size_t, but only in in C#
+    @Override
+    public int hashCode() {
         return (int)GetHashValue();
     }
 %}
 
 %include "managed_languages/class_directives/NDShape.i"
-%typemap(cscode) CNTK::NDShape %{
+%typemap(javacode) CNTK::NDShape %{
 
-    public NDShape(int numAxes, int dimension) : this((uint)numAxes, (uint)dimension)
+    /*public NDShape(int numAxes, int dimension) : this((uint)numAxes, (uint)dimension)
     {
         if (numAxes < 0 || dimension < 0)
         {
             throw new System.ArgumentException("The paraemter numAxes or dimension should not be a negative value");
         }
-    }
+    }*/
 
-    public NDShape(int numAxes) : this((uint)numAxes)
+    /*public NDShape(int numAxes) : this((uint)numAxes)
     {
         if (numAxes < 0)
         {
             throw new System.ArgumentException("The paraemter numAxes should not be a negative value");
         }
-    }
+    }*/
 
-    public int Rank
-    {
-        get { return (int)GetRank(); }
-    }
-
-    public System.Collections.Generic.IList<int> Dimensions
-    {
-        get
-        {
-            var dimList = GetDimensions();
-            var retList = new System.Collections.Generic.List<int>(dimList.Count);
-            foreach (var element in dimList)
-            {
-                retList.Add((int)element);
-            }
-            return retList;
+    public java.util.ArrayList<Long> getDimensions(){
+        java.util.ArrayList<Long> ret = new java.util.ArrayList<Long>((int)GetRank());
+        for (int i = 0; i < GetDimensions().size(); ++i ) {
+            ret.add((Long)GetDimensions().get(i));
         }
+        return ret;
     }
 
-    public bool IsUnknown 
-    {
-        get { return _IsUnknown(); }
-    }
-
-    public bool HasInferredDimension
-    {
-        get { return _HasInferredDimension(); }
-    }
-
-    public bool HasFreeDimension
-    {
-        get { return _HasFreeDimension(); }
-    }
-
-    public int TotalSize
-    {
-        get { return (int)GetTotalSize(); }
-    }
-
-    public int this[int key]
-    {
-        get { return (int)GetDimensionSize((uint)key); }
-    }
-
-    public NDShape SubShape(int beginAxisId, int endAxisId)
+    /*public NDShape SubShape(int beginAxisId, int endAxisId)
     {
         if (beginAxisId < 0 || endAxisId < 0)
         {
             throw new System.ArgumentException("The paraemter beginAxisId or endAxisId should not be a negative value");
         }
         return SubShape((uint)beginAxisId, (uint)endAxisId);
-    }
+    }*/
 
-    public NDShape SubShape(int beginAxisId)
+    /*public NDShape SubShape(int beginAxisId)
     {
         if (beginAxisId < 0)
         {
             throw new System.ArgumentException("The paraemter beginAxisId should not be a negative value");
         }
         return SubShape((uint)beginAxisId);
-    }
+    }*/
 
-    public static NDShape CreateNDShape(System.Collections.Generic.IEnumerable<int> dimensions)
+    /*public static NDShape CreateNDShape(System.Collections.Generic.IEnumerable<int> dimensions)
     {
         var dimVector = new SizeTVector();
         foreach (var element in dimensions)
@@ -633,102 +337,49 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
             dimVector.Add((uint)element);
         }
         return new NDShape(dimVector);
-    }
+    }*/
 
-    public override bool Equals(System.Object obj)
-    {
-        // If parameter is null return false.
-        if (obj == null)
-        {
-            return false;
-        }
-
-        // If parameter cannot be cast to Point return false.
-        NDShape p = obj as NDShape;
-        if ((System.Object)p == null)
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        NDShape p = (NDShape)o;
+        if (p == null) return false;
         return CNTKLib.AreEqualShape(this, p);
     }
 
-    public bool Equals(NDShape p)
-    {
-        // If parameter is null return false:
-        if ((object)p == null)
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
+    public boolean equals(NDShape p) {
+        if (p == null) return false;
         return CNTKLib.AreEqualShape(this, p);
     }
 
-    public static bool operator ==(NDShape first, NDShape second)
-    {
-        // If both are null, or both are same instance, return true.
-        if (System.Object.ReferenceEquals(first, second))
-        {
-            return true;
-        }
-
-        // If one is null, but not both, return false.
-        if (((object)first == null) || ((object)second == null))
-        {
-            return false;
-        }
-
-        // Return true if the fields match:
-        return CNTKLib.AreEqualShape(first, second);
+    @Override
+    public int hashCode() {
+        return GetDimensions().hashCode();
     }
 
-    public static bool operator !=(NDShape first, NDShape second)
-    {
-        return !(first == second);
-    }
-
-    public override int GetHashCode()
-    {
-        //Todo: another hash function??
-        return this.GetDimensions().GetHashCode();
-    }
-
-    public static readonly int InferredDimension = -1;
-    public static readonly int FreeDimension = -3;
+    /*public static readonly int InferredDimension = -1;
+    public static readonly int FreeDimension = -3;*/
 %}
 
 %include "managed_languages/class_directives/NDMask.i"
-%typemap(cscode) CNTK::NDMask %{
-    public void InvalidateSection(System.Collections.Generic.IEnumerable<int> sectionOffset, NDShape sectionShape) {
+%typemap(javacode) CNTK::NDMask %{
+    /*public void InvalidateSection(System.Collections.Generic.IEnumerable<int> sectionOffset, NDShape sectionShape) {
         var offsetVector = AsSizeTVector(sectionOffset);
         _InvalidateSection(offsetVector, sectionShape);
-    }
+    }*/
 
-    public void MarkSequenceBegin(System.Collections.Generic.IEnumerable<int> offset) {
+    /*public void MarkSequenceBegin(System.Collections.Generic.IEnumerable<int> offset) {
         var offsetVector = AsSizeTVector(offset);
         _MarkSequenceBegin(offsetVector);
-    }
+    }*/
 
-    public void MarkSequenceBegin(System.Collections.Generic.IEnumerable<int> offset, NDShape sectionShape) {
+    /*public void MarkSequenceBegin(System.Collections.Generic.IEnumerable<int> offset, NDShape sectionShape) {
         var offsetVector = AsSizeTVector(offset);
         _MarkSequenceBegin(offsetVector, sectionShape);
-    }
+    }*/
 
-    public int MaskedCount {
-        get { return (int)GetMaskedCount(); }
-    }
-
-    public DeviceDescriptor Device {
-        get { return GetDevice(); }
-    }
-
-    public NDShape Shape {
-        get { return GetShape(); }
-    }
-
-    private static SizeTVector AsSizeTVector(System.Collections.Generic.IEnumerable<int> input)
+    /*private static SizeTVector AsSizeTVector(System.Collections.Generic.IEnumerable<int> input)
     {
         var inputVector = new SizeTVector();
         foreach (var element in input)
@@ -740,69 +391,13 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
             inputVector.Add((uint)element);
         }
         return inputVector;
-    }
+    }*/
 %}
 
 %include "managed_languages/class_directives/Value.i"
-%typemap(cscode) CNTK::Value %{
+%typemap(javacode) CNTK::Value %{
 
-    public DeviceDescriptor Device
-    {
-        get
-        {
-            return GetDevice();
-        }
-    }
-
-    public DataType DataType
-    {
-        get
-        {
-            return GetDataType();
-        }
-    }
-
-    public StorageFormat StorgeFormat
-    {
-        get
-        {
-            return GetStorageFormat();
-        }
-    }
-
-    public NDShape Shape
-    {
-        get
-        {
-            return GetShape();
-        }
-    }
-
-    public bool IsSparse
-    {
-        get
-        {
-            return _IsSparse();
-        }
-    }
-
-    public bool IsReadOnly
-    {
-        get
-        {
-            return _IsReadOnly();
-        }
-    }
-
-    public int MaskedCount
-    {
-        get
-        {
-            return (int)_MaskedCount();
-        }
-    }
-
-    // Create Value object from dense input: batch, sequence or batch of sequences.
+    /*// Create Value object from dense input: batch, sequence or batch of sequences.
     public static Value CreateBatch<T>(NDShape sampleShape, System.Collections.Generic.IEnumerable<T> batch, DeviceDescriptor device, bool readOnly = false)
     {
         if (typeof(T).Equals(typeof(float)))
@@ -1176,8 +771,9 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
             throw new System.ArgumentException("The value type does not match the list type.");
         }
         return sequences;
-    }
+    }*/
 
+    /*
     //
     // Return the data of the Value object as a list of sequences with variable length.
     // This method returns an IList<IList<T>>. Each element of the outer list represents a sequence.
@@ -1343,13 +939,12 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
             inputVector.Add(element);
         }
         return inputVector;
-    }
+    }*/
 %}
 
-%include "CNTKValueExtend.i"
 %include "managed_languages/class_directives/NDArrayView.i"
-%typemap(cscode) CNTK::NDArrayView %{
-    public NDArrayView(NDShape viewShape, float[] dataBuffer, DeviceDescriptor device, bool readOnly = false) : this(viewShape, dataBuffer, (uint)dataBuffer.Length, device, readOnly)
+%typemap(javacode) CNTK::NDArrayView %{
+    /*public NDArrayView(NDShape viewShape, float[] dataBuffer, DeviceDescriptor device, bool readOnly = false) : this(viewShape, dataBuffer, (uint)dataBuffer.Length, device, readOnly)
     {
     }
 
@@ -1379,57 +974,9 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
         {
             throw new System.ArgumentException("The length of colStarts does not match the number of rows, i.e. the dimension size of the last rank of viewShape.");
         }
-    }
+    }*/
 
-    public DeviceDescriptor Device
-    {
-        get
-        {
-            return GetDevice();
-        }
-    }
-
-    public DataType DataType
-    {
-        get
-        {
-            return GetDataType();
-        }
-    }
-
-    public NDShape Shape
-    {
-        get
-        {
-            return GetShape();
-        }
-    }
-
-    public StorageFormat StorageFormat
-    {
-        get
-        {
-            return GetStorageFormat();
-        }
-    }
-
-    public bool IsSparse
-    {
-        get
-        {
-            return _IsSparse();
-        }
-    }
-
-    public bool IsReadOnly
-    {
-        get
-        {
-            return _IsReadOnly();
-        }
-    }
-
-    public NDArrayView SliceView(System.Collections.Generic.IEnumerable<int> startOffset, System.Collections.Generic.IEnumerable<int> extent, bool readOnly = false)
+    /*public NDArrayView SliceView(System.Collections.Generic.IEnumerable<int> startOffset, System.Collections.Generic.IEnumerable<int> extent, bool readOnly = false)
     {
         var startOffsetVector = AsSizeTVector(startOffset);
 
@@ -1450,9 +997,8 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
             inputVector.Add((uint)element);
         }
         return inputVector;
-    }
+    }*/
 %}
 
 %include "CNTKLibraryInternals.h"
 %include "CNTKLibrary.h"
-

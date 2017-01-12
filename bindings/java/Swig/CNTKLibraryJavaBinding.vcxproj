@@ -23,9 +23,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{277EBD9D-2504-49FA-AC72-59D5515130C3}</ProjectGuid>
-    <RootNamespace>CNTKLibraryCSBinding</RootNamespace>
-    <ProjectName>CNTKLibraryCSBinding</ProjectName>
+    <ProjectGuid>{5D1972FA-F0A4-4035-8E63-8BAEF0230097}</ProjectGuid>
+    <RootNamespace>CNTKLibraryJavaBinding</RootNamespace>
+    <ProjectName>CNTKLibraryJavaBinding</ProjectName>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\CNTK.Cpp.props" />
   <PropertyGroup Condition="$(DebugBuild)" Label="Configuration">
@@ -52,14 +52,14 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PreprocessorDefinitions>SWIG;SWIGCSHARP</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\CNTKv2LibraryDll\API;$(SolutionDir)Source\Common\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SWIG;SWIGJAVA</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\CNTKv2LibraryDll\API;$(SolutionDir)Source\Common\Include;$(JAVA_HOME)\include;$(JAVA_HOME)\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FloatingPointModel>Fast</FloatingPointModel>
       <OpenMPSupport>true</OpenMPSupport>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -101,23 +101,23 @@
   </ItemDefinitionGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <TargetName>Cntk.Core.CSBinding-$(CntkComponentVersion)</TargetName>
+    <TargetName>Cntk.Core.JavaBinding-$(CntkComponentVersion)</TargetName>
   </PropertyGroup>
   <ItemGroup>
-    <CustomBuild Include="cntk_cs.i">
+    <CustomBuild Include="cntk_java.i">
       <FileType>Document</FileType>
-      <Command>$(SWIG_PATH)\swig.exe -c++ -csharp -DMSC_VER -I$(SolutionDir)Source\CNTKv2LibraryDll\API -I$(SolutionDir)bindings\common -namespace CNTK -outdir  $(SolutionDir)bindings\csharp\CNTKLibraryManagedDll\SwigProxyClasses -dllimport Cntk.Core.CSBinding-$(CntkComponentVersion).dll cntk_cs.i</Command>
-      <Outputs>cntk_cs_wrap.cxx; cntk_cs_warp.h</Outputs>
-      <AdditionalInputs>$(SolutionDir)bindings\common\CNTKValueExtend.i;$(SolutionDir)bindings\common\CNTK_ExceptionHandling.i;$(SolutionDir)bindings\common\managed_languages\array_mappings.i;$(SolutionDir)bindings\common\managed_languages\class_directives\Axis.i;$(SolutionDir)bindings\common\managed_languages\class_directives\DeviceDescriptor.i;$(SolutionDir)bindings\common\managed_languages\class_directives\Function.i;$(SolutionDir)bindings\common\managed_languages\class_directives\NDArrayView.i;$(SolutionDir)bindings\common\managed_languages\class_directives\NDMask.i;$(SolutionDir)bindings\common\managed_languages\class_directives\NDShape.i;$(SolutionDir)bindings\common\managed_languages\class_directives\Value.i;$(SolutionDir)bindings\common\managed_languages\class_directives\Variable.i;$(SolutionDir)bindings\common\managed_languages\defines.i;$(SolutionDir)bindings\common\managed_languages\header.i;$(SolutionDir)bindings\common\managed_languages\ignores.i;$(SolutionDir)bindings\common\managed_languages\shared_ptrs.i;$(SolutionDir)bindings\common\managed_languages\templates.i;$(SolutionDir)bindings\common\managed_language_base.i;$(SolutionDir)Source\CNTKv2LibraryDll\API\CNTKLibrary.h;std_unordered_map.i</AdditionalInputs>
+      <Command>$(SolutionDir)bindings\java\Swig\generate-java-bindings.cmd $(ProjectDir) $(OutDir)</Command>
+      <Outputs>cntk_java_wrap.cxx; cntk_java_warp.h; $(SolutionDir)bindings\java\SwigProxyClasses\cntk.jar</Outputs>
+      <AdditionalInputs>$(SolutionDir)bindings\common\CNTKValueExtend.i;$(SolutionDir)bindings\common\CNTK_ExceptionHandling.i;$(SolutionDir)bindings\common\managed_languages\array_mappings.i;$(SolutionDir)bindings\common\managed_languages\class_directives\Axis.i;$(SolutionDir)bindings\common\managed_languages\class_directives\DeviceDescriptor.i;$(SolutionDir)bindings\common\managed_languages\class_directives\Function.i;$(SolutionDir)bindings\common\managed_languages\class_directives\NDArrayView.i;$(SolutionDir)bindings\common\managed_languages\class_directives\NDMask.i;$(SolutionDir)bindings\common\managed_languages\class_directives\NDShape.i;$(SolutionDir)bindings\common\managed_languages\class_directives\Value.i;$(SolutionDir)bindings\common\managed_languages\class_directives\Variable.i;$(SolutionDir)bindings\common\managed_languages\defines.i;$(SolutionDir)bindings\common\managed_languages\header.i;$(SolutionDir)bindings\common\managed_languages\ignores.i;$(SolutionDir)bindings\common\managed_languages\shared_ptrs.i;$(SolutionDir)bindings\common\managed_languages\templates.i;$(SolutionDir)bindings\common\managed_language_base.i;$(SolutionDir)Source\CNTKv2LibraryDll\API\CNTKLibrary.h;std_unordered_map.i;$(SolutionDir)bindings\java\Swig\generate-java-bindings.cmd;</AdditionalInputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cntk_cs_wrap.cxx" />
+    <ClCompile Include="cntk_java_wrap.cxx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\CNTKv2LibraryDll\API\CNTKLibrary.h" />
     <ClInclude Include="..\..\..\Source\CNTKv2LibraryDll\API\CNTKLibraryInternals.h" />
-    <ClInclude Include="cntk_cs_wrap.h" />
+    <ClInclude Include="cntk_java_wrap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\common\CNTKValueExtend.i" />
@@ -136,12 +136,14 @@
     <None Include="..\..\common\managed_languages\ignores.i" />
     <None Include="..\..\common\managed_languages\shared_ptrs.i" />
     <None Include="..\..\common\managed_languages\templates.i" />
+    <None Include="..\..\common\managed_language_base.i" />
     <None Include="std_unordered_map.i" />
   </ItemGroup>
   <Target Name="CheckDependencies">
     <Warning Condition="!$(HasSwig)" Text="The project requires SWIG to be installed. Please see https://github.com/Microsoft/CNTK/wiki/Setup-CNTK-on-Windows#optional-cntk-cnet-library-for-evaluation for installation instructions." />
+    <Warning Condition="!$(HasJava)" Text="The project requires the Java JDK to be installed. Please see http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html for installation instructions." />
   </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Target Name="Build" Condition="$(HasSwig)" Outputs="$(TargetPath)" DependsOnTargets="$(BuildDependsOn)" />
+  <Target Name="Build" Condition="$(HasSwig) And $(HasJava)" Outputs="$(TargetPath)" DependsOnTargets="$(BuildDependsOn)" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>
