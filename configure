@@ -561,7 +561,7 @@ do
             fi
             ;;
         --java*)
-            if test x$optarg = xyes || test x$optarg = xno || test x$optarg = maybe
+            if test x$optarg = xyes || test x$optarg = xno || test x$optarg = xmaybe
             then
                 enable_java=$optarg
             else
