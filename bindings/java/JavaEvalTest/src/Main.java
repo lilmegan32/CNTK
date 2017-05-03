@@ -17,15 +17,18 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        String libName = "Cntk.Core.JavaBinding-2.0rc2";
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+
+		String libName = "Cntk.Core.JavaBinding-2.0rc2";
         if (args[0].equals("debug")) {
             libName += 'd';
         }
         System.loadLibrary(libName);
-
+		
         DeviceDescriptor device = DeviceDescriptor.UseDefaultDevice();
-        File dataPath = new File("data/");
-        Function modelFunc = Function.Load(new File(dataPath, "resnet20.dnn").getAbsolutePath(), device);
+        File dataPath = new File(args[1]);
+
+        Function modelFunc = Function.Load(new File(dataPath, "resnet20_cifar10_python.dnn").getAbsolutePath(), device);
         Variable outputVar = modelFunc.getOutputs().get(0);
         Variable inputVar = modelFunc.getArguments().get(0);
 

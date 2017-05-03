@@ -138,6 +138,7 @@
     <None Include="..\..\common\managed_languages\templates.i" />
     <None Include="..\..\common\managed_language_base.i" />
     <None Include="..\JavaEvalTest\src\Main.java" />
+    <None Include="generate-java-bindings.cmd" />
     <None Include="std_unordered_map.i" />
   </ItemGroup>
   <Target Name="CheckDependencies">

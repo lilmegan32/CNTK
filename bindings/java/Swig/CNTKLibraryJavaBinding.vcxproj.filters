@@ -89,6 +89,7 @@
       <Filter>Interface FIles</Filter>
     </None>
     <None Include="..\JavaEvalTest\src\Main.java" />
+    <None Include="generate-java-bindings.cmd" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="cntk_java.i">
