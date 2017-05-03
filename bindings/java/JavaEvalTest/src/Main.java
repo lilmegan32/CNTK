@@ -25,7 +25,7 @@ public class Main {
 
         DeviceDescriptor device = DeviceDescriptor.UseDefaultDevice();
         File dataPath = new File("data/");
-        Function modelFunc = Function.Load(new File(dataPath, "z.model").getAbsolutePath(), device);
+        Function modelFunc = Function.Load(new File(dataPath, "resnet20.dnn").getAbsolutePath(), device);
         Variable outputVar = modelFunc.getOutputs().get(0);
         Variable inputVar = modelFunc.getArguments().get(0);
 
@@ -88,12 +88,14 @@ public class Main {
         FloatVectorVector outputBuffer = new FloatVectorVector();
         outputDataMap.getitem(outputVar).CopyVariableValueToFloat(outputVar, outputBuffer);
 
+		
+
         float[] trueResults = {
-                -1.887479f, -4.768533f,
-                0.1516971f, 6.805476f,
-                -0.3840595f, 3.4106512f,
-                1.3302777f, -0.87714916f,
-                -2.18046f, -4.1666183f};
+			1.8332684f, -1.2344797f,
+			0.8234947f, 1.1041543f,
+			-0.60203075f, 0.3507995f,
+			-0.23070706f, 0.86258215f,
+			-1.3960208f, -0.22295414f};
 
 
         for (int j = 0; j < outputBuffer.get(0).size(); j++) {

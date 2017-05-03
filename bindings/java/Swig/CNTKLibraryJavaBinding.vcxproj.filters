@@ -88,6 +88,7 @@
     <None Include="std_unordered_map.i">
       <Filter>Interface FIles</Filter>
     </None>
+    <None Include="..\JavaEvalTest\src\Main.java" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="cntk_java.i">
