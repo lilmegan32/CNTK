@@ -16,8 +16,10 @@ fi
 # Copy pretrained models and data
 if [ "$OS" == "Windows_NT" ]; then
   TestDataDir=`cygpath -au "$CNTK_EXTERNAL_TESTDATA_SOURCE_DIRECTORY/Bindings/Java"`
+  ModelFile=`cygpath -au "$CNTK_EXTERNAL_TESTDATA_SOURCE_DIRECTORY/PreTrainedModels/EvalModels/resnet20_cifar10_python.dnn"`
 else
   TestDataDir="$CNTK_EXTERNAL_TESTDATA_SOURCE_DIRECTORY/Bindings/Java"
+  ModelFile="$CNTK_EXTERNAL_TESTDATA_SOURCE_DIRECTORY/PreTrainedModels/EvalModels/resnet20_cifar10_python.dnn"
 fi
 
 LocalDataDir="$TEST_ROOT_DIR/../../bindings/java/JavaEvalTest/data"
@@ -25,6 +27,7 @@ if [ ! -d "$LocalDataDir" ]; then
   mkdir "$LocalDataDir"
 fi
 cp "$TestDataDir"/* "$LocalDataDir"
+cp "$ModelFile" "$LocalDataDir"
 
 if [ "$OS" == "Windows_NT" ]; then
   # Run the evaluation test
