@@ -39,12 +39,11 @@ if [ "$OS" == "Windows_NT" ]; then
   cd "$TEST_BIN_DIR"
   java.exe -Djava.library.path=$DllDir -classpath "$DllDir\java;$DllDir\java\cntk.jar" Main $TEST_FLAVOR "$WindowsDataDir"
 else
-  # Run the evaluation test
-  CntkRoot=$TEST_ROOT_DIR/../..
 
   TEST_LIB_DIR=$TEST_BUILD_LOCATION/$TEST_FLAVOR/lib
   TEST_LIB_JAVA_DIR=$TEST_LIB_DIR/java
-  export LD_LIBRARY_PATH=$TEST_LIB_DIR:$LD_LIBRARY_PATH
+
   cd $TEST_LIB_DIR
   java -classpath "$TEST_LIB_JAVA_DIR:$TEST_LIB_JAVA_DIR/cntk.jar" Main $TEST_FLAVOR "$LocalDataDir"
+
 fi
