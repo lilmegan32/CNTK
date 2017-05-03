@@ -43,5 +43,5 @@ else
   TEST_LIB_JAVA_DIR=$TEST_LIB_DIR/java
   export LD_LIBRARY_PATH=$TEST_LIB_DIR:$LD_LIBRARY_PATH
   cd $LocalDataDir/..
-  java -classpath "$TEST_LIB_JAVA_DIR:$TEST_LIB_JAVA_DIR/cntk.jar" $TEST_LIB_JAVA_DIR/Main $TEST_FLAVOR
+  java -classpath "$TEST_LIB_JAVA_DIR:$TEST_LIB_JAVA_DIR/cntk.jar" Main $TEST_FLAVOR
 fi
