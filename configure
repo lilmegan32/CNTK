@@ -17,7 +17,6 @@ enable_cuda=
 enable_python=
 
 enable_java=
-jdk_include_path=
 
 # NCCL communication library
 have_nccl=no
@@ -339,11 +338,11 @@ function default_use_java ()
 {
     jdk_path=$(find_jdk)
     if test x$jdk_path = x
-	then
-	    echo no
-	else
-	    echo yes
-	fi
+    then
+        echo no
+    else
+        echo yes
+    fi
 }
 enable_java=$(default_use_java)
 
