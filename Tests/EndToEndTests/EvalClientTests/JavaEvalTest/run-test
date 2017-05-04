@@ -46,6 +46,7 @@ else # On Linux
   export LD_LIBRARY_PATH=$TEST_LIB_DIR:$LD_LIBRARY_PATH
   echo $LD_LIBRARY_PATH
   cd $TEST_LIB_DIR
+  ldd libCntk.Core.JavaBinding-2.0rc2d.so
   java -Djava.library.path="$TEST_LIB_DIR" -classpath "$TEST_LIB_DIR/java:$TEST_LIB_DIR/java/cntk.jar" Main $TEST_FLAVOR "$LocalDataDir"
 
 fi
