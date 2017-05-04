@@ -19,12 +19,12 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
-		String libName = "Cntk.Core.JavaBinding-2.0rc2";
+        String libName = "Cntk.Core.JavaBinding-2.0rc2";
         if (args[0].equals("debug")) {
             libName += 'd';
         }
         System.loadLibrary(libName);
-		
+
         DeviceDescriptor device = DeviceDescriptor.UseDefaultDevice();
         File dataPath = new File(args[1]);
 
@@ -91,15 +91,18 @@ public class Main {
         FloatVectorVector outputBuffer = new FloatVectorVector();
         outputDataMap.getitem(outputVar).CopyVariableValueToFloat(outputVar, outputBuffer);
 
-		
 
         float[] trueResults = {
-			1.8332684f, -1.2344797f,
-			0.8234947f, 1.1041543f,
-			-0.60203075f, 0.3507995f,
-			-0.23070706f, 0.86258215f,
-			-1.3960208f, -0.22295414f};
-
+                2.820341f,
+                9.967621f,
+                0.028942442f,
+                4.349778f,
+                -12.51383f,
+                7.170159f,
+                -4.547992f,
+                -3.689762f,
+                -4.393841f,
+                1.4517201f};
 
         for (int j = 0; j < outputBuffer.get(0).size(); j++) {
             System.out.println(outputBuffer.get(0).get(j) + " ");
