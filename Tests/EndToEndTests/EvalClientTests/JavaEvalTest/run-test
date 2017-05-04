@@ -30,6 +30,7 @@ cp "$TestDataDir"/* "$LocalDataDir"
 cp "$ModelFile" "$LocalDataDir"
 
 if [ "$OS" == "Windows_NT" ]; then
+
   # Run the evaluation test
   DllDir=`cygpath -aw "$TEST_BIN_DIR"`
   WindowsDataDir=`cygpath -aw "$LocalDataDir"`
@@ -38,9 +39,10 @@ if [ "$OS" == "Windows_NT" ]; then
   PATH="$PATH:$TEST_BIN_DIR"
   cd "$TEST_BIN_DIR"
   java.exe -Djava.library.path=$DllDir -classpath "$DllDir\java;$DllDir\java\cntk.jar" Main $TEST_FLAVOR "$WindowsDataDir"
-else
 
-  TEST_LIB_DIR=$TEST_BUILD_LOCATION/$TEST_FLAVOR/lib
+else # On Linux
+
+  TEST_LIB_DIR= $TEST_BIN_DIR/../lib
   TEST_LIB_JAVA_DIR=$TEST_LIB_DIR/java
 
   cd $TEST_LIB_DIR
