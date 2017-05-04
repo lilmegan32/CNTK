@@ -43,9 +43,8 @@ if [ "$OS" == "Windows_NT" ]; then
 else # On Linux
 
   TEST_LIB_DIR=$TEST_BIN_DIR/../lib
-  TEST_LIB_JAVA_DIR=$TEST_LIB_DIR/java
 
   cd $TEST_LIB_DIR
-  java -classpath "$TEST_LIB_JAVA_DIR:$TEST_LIB_JAVA_DIR/cntk.jar" Main $TEST_FLAVOR "$LocalDataDir"
+  java -Djava.library.path="$TEST_LIB_DIR" -classpath "$TEST_LIB_DIR/java:$TEST_LIB_DIR/java/cntk.jar" Main $TEST_FLAVOR "$LocalDataDir"
 
 fi
