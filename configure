@@ -330,26 +330,20 @@ function default_use_python ()
 }
 enable_python=$(default_use_python)
 
-function check_jdk ()
-{
-    local jdk_dir="$1"
-    local jdk_file="$jdk_dir/$jdk_check"
-
-    # Check that jni header exists
-    test -f "$jdk_file" || return $?
-
-    echo "$jdk_dir"
-}
-
 function find_jdk ()
 {
     echo $(find_dir $default_jdk "$jdk_check")
 }
 
-
 function default_use_java ()
 {
-        echo maybe
+    jdk_path=$(find_jdk)
+    if test x$jdk_path = x
+	then
+	    echo no
+	else
+	    echo yes
+	fi
 }
 enable_java=$(default_use_java)
 
@@ -374,7 +368,7 @@ function show_help ()
     echo "  --asgd[=(yes|no)] use ASGD powered by Multiverso $(show_default $(default_use_asgd))"
     echo "  --cuda[=(yes|no)] use cuda GPU $(show_default $(default_use_cuda))"
     echo "  --python[=(yes|no)] with Python bindings $(show_default $(default_use_python))"
-    echo "  --java[=(yes|no|maybe)] with Java bindings $(show_default $(default_use_java))"
+    echo "  --java[=(yes|no)] with Java bindings $(show_default $(default_use_java))"
     echo "  --with-jdk[=directory] $(show_default $(find_jdk))"
     echo "  --mpi[=(yes|no)] use MPI communication $(show_default ${default_use_mpi})"
     echo "  --gdr[=(yes|no)] use GPUDirect RDMA $(show_default ${default_cuda_gdr})"
@@ -561,7 +555,7 @@ do
             fi
             ;;
         --java*)
-            if test x$optarg = xyes || test x$optarg = xno || test x$optarg = xmaybe
+            if test x$optarg = xyes || test x$optarg = xno
             then
                 enable_java=$optarg
             else
@@ -575,15 +569,19 @@ do
             enable_java=yes
             if test x$optarg = x
             then
-                echo "Invalid value for --with-jdk $optarg"
-                show_help
-                exit 1
+                jdk_path=$(find_jdk)
+                if test x$jdk_path = x
+                then
+                    echo "Cannot find Java JDK directory."
+                    echo "Please specify a value for --with-swig"
+                    exit 1
+                fi
             else
-                if check_jdk "$optarg"
+                if test $(check_dir $optarg $jdk_check) = yes
                 then
                     jdk_path=$optarg
                 else
-                    echo "Invalid JDK directory $optarg"
+                    echo "Invalid Java JDK directory $optarg"
                     exit 1
                 fi
             fi
@@ -1013,16 +1011,14 @@ then
     fi
 fi
 
-if ( test $enable_java = yes || test $enable_java = maybe || test $enable_python = yes ) && test x$swig_path = x
+if ( test $enable_java = yes || test $enable_python = yes ) && test x$swig_path = x
 then
     swig_path=$(find_swig)
     if test x$swig_path = x
     then
         echo 'Cannot locate SWIG (>= 3.0.10), which is required Python/Java support.'
         echo Check bindings/python/swig_install.sh for build instructions.
-        if (test $enable_java = yes || test $enable_python = yes); then
-            exit 1
-        fi
+        exit 1
     fi
 fi
 
@@ -1175,7 +1171,7 @@ if test $enable_cuda = yes ; then
     echo CUDNN_PATH=$cudnn_path >> $config
     [ -z "$nccl_path" ] || echo NCCL_PATH=$nccl_path >> $config
 fi
-if test $enable_python = yes || test $enable_java = yes || test $enable_java = maybe ; then
+if test $enable_python = yes || test $enable_java = yes ; then
     echo SWIG_PATH=$swig_path/bin >> $config
 fi
 if test $enable_python = yes ; then
@@ -1188,16 +1184,14 @@ if test $enable_python = yes ; then
         echo PYTHON${ver}_PATH=${py_paths[$ver]}/$py_check >> $config
     done
 fi
-if test $enable_java = yes || test $enable_java = maybe ; then
+if test $enable_java = yes then
     if test x${jdk_path} = x ; then
         jdk_path=$(find_jdk)
     fi
     if test x${jdk_path} = x
     then
         echo Cannot locate JDK.
-        if test $enable_java=yes; then
-            exit 1
-        fi
+        exit 1
     else
         echo Found JDK at $jdk_path
         echo JAVA_SUPPORT=true >> $config
