@@ -28,6 +28,7 @@
     #pragma warning(disable : 4100)
 %}
 
+// shared_ptr definitions
 %shared_ptr(CNTK::BackPropState);
 %shared_ptr(CNTK::Function);
 %shared_ptr(CNTK::CompositeFunction);
@@ -37,8 +38,9 @@
 %shared_ptr(CNTK::NDMask);
 %shared_ptr(std::vector<float>);
 
-#ifdef SWIGCSHARP
+// temaplate definitions
 
+#ifdef SWIGCSHARP
 SWIG_STD_VECTOR_ENHANCED(size_t)
 SWIG_STD_VECTOR_ENHANCED(double)
 SWIG_STD_VECTOR_ENHANCED(float)
@@ -47,8 +49,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::Axis)
 SWIG_STD_VECTOR_ENHANCED(std::shared_ptr<CNTK::NDArrayView>)
 SWIG_STD_VECTOR_ENHANCED(bool)
 SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
-
-#endif
+#endif //SWIGCSHARP
 
 %template(SizeTVector) std::vector<size_t>;
 %template(DoubleVector) std::vector<double>;
@@ -65,6 +66,8 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %template(UnorderedMapVariableVariable) std::unordered_map<CNTK::Variable, CNTK::Variable>;
 %template(FunctionPtrVector) std::vector<std::shared_ptr<CNTK::Function>>;
 
+// ignore items not needed.
+
 #define %ignore_function %rename("$ignore", %$isfunction, fullname=1)
 #define %ignore_class %rename("$ignore", %$isclass, fullname=1)
 #define %ignore_namespace %rename("$ignore", %$isnamespace, fullname=1)
@@ -72,7 +75,6 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 // It seems that SWIG does not understand %$isstruct.
 #define %ignore_struct %rename("$ignore", fullname=1)
 #define %ignore_enum_class %rename("$ignore", fullname=1)
-
 
 %ignore_function CNTK::PlaceholderVariable;
 %ignore_function CNTK::InputVariable;
@@ -362,11 +364,14 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %ignore_struct CNTK::GPUProperties;
 %ignore_function CNTK::DeviceDescriptor::GetGPUProperties;
 
+// define typemap for dataBuffer
 %apply float INPUT[]  { float *dataBuffer }
 %apply double INPUT[]  { double *dataBuffer }
 
+// exception handling
 %include "CNTK_ExceptionHandling.i"
 
+// class DeviceDescriptor
 %rename (GetAllDevices) CNTK::DeviceDescriptor::AllDevices;
 %rename (GetCPUDevice) CNTK::DeviceDescriptor::CPUDevice;
 %rename (GetDeviceType) CNTK::DeviceDescriptor::Type;
@@ -374,6 +379,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %rename (_SetExcludedDevices) CNTK::DeviceDescriptor::SetExcludedDevices;
 %rename (AreEqualDeviceDescriptor) CNTK::operator==(const DeviceDescriptor& left, const DeviceDescriptor& right);
 
+// class Axis
 %rename (GetName) CNTK::Axis::Name;
 %rename (IsOrderedAxis) CNTK::Axis::IsOrdered;
 %rename (AreEqualAxis) CNTK::operator==(const Axis& first, const Axis& second);
@@ -385,6 +391,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %ignore_function CNTK::Axis::DefaultInputVariableDynamicAxes();
 %ignore_function CNTK::Axis::UnknownDynamicAxes();
 
+// class Function
 %ignore CNTK::Function::BlockArgumentsMapping;
 %rename (GetName) CNTK::Function::Name;
 %rename (GetUid) CNTK::Function::Uid;
@@ -444,12 +451,12 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
   JCALL3(ReleaseByteArrayElements, jenv, $input, (jbyte *) $1, 0);
 }
 %typemap(javain) (char* modelBuffer) "$javainput"
-
 /* Prevent default freearg typemap from being used */
 %typemap(freearg) (char* modelBuffer) ""
 
 #endif  // SWIGJAVA
 
+// class Varaiable
 %ignore CNTK::Variable::Variable;
 %rename ("%s") CNTK::Variable::Variable(const FunctionPtr& function);
 %rename (GetShape) CNTK::Variable::Shape;
@@ -465,6 +472,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %rename (GetOwner) CNTK::Variable::Owner;
 %rename (AreEqualVariable) CNTK::operator==(const Variable& first, const Variable& second);
 
+// class NDShape
 %rename (GetDimensions) CNTK::NDShape::Dimensions;
 %rename (GetRank) CNTK::NDShape::Rank;
 %rename (GetTotalSize) CNTK::NDShape::TotalSize;
@@ -484,6 +492,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
     }
 }
 
+// class NDMask
 // Todo: add correct typemap as they might be useful in future.
 %ignore_function CNTK::NDMask::DataBuffer;
 %rename (GetMaskedCount) CNTK::NDMask::MaskedCount;
@@ -493,6 +502,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %rename (_MarkSequenceBegin) CNTK::NDMask::MarkSequenceBegin;
 %rename (_InvalidateSection) CNTK::NDMask::InvalidateSection;
 
+// class Value
 %apply int INPUT[]  { int *colStarts }
 %apply int INPUT[]  { int *rowIndices }
 %apply float INPUT[]  { float *nonZeroValues }
@@ -506,6 +516,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 
 %include "CNTKValueExtend.i"
 
+// class NDArrayView
 %ignore CNTK::NDArrayView::NDArrayView(::CNTK::DataType dataType, const NDShape& viewShape, void* dataBuffer, size_t bufferSizeInBytes, const DeviceDescriptor& device, bool readOnly = false);
 %ignore CNTK::NDArrayView::NDArrayView(::CNTK::DataType dataType, const NDShape& viewShape, const void* dataBuffer, size_t bufferSizeInBytes, const DeviceDescriptor& device);
 %ignore CNTK::NDArrayView::NDArrayView(double value, DataType dataType = DataType::Float, const NDShape& viewShape = { 1 }, const DeviceDescriptor& device = DeviceDescriptor::UseDefaultDevice(), bool readOnly = false);
@@ -546,7 +557,6 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
     {
         return new CNTK::NDArrayView(viewShape, colStarts, rowIndices, nonZeroValues, numNonZeroValues, device, readOnly);
     }
-
 }
 
 %rename (GetDevice) CNTK::NDArrayView::Device;
@@ -554,8 +564,3 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %rename (_IsSparse) CNTK::NDArrayView::IsSparse;
 %rename (_IsReadOnly) CNTK::NDArrayView::IsReadOnly;
 %rename (_SliceView) CNTK::NDArrayView::SliceView;
-
-
-
-
-
