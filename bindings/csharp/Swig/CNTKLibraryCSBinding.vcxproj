@@ -119,22 +119,9 @@
     <ClInclude Include="cntk_cs_wrap.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\common\CNTKManagedCommon.i" />
     <None Include="..\..\common\CNTKValueExtend.i" />
     <None Include="..\..\common\CNTK_ExceptionHandling.i" />
-    <None Include="..\..\common\managed_languages\array_mappings.i" />
-    <None Include="..\..\common\managed_languages\class_directives\Axis.i" />
-    <None Include="..\..\common\managed_languages\class_directives\DeviceDescriptor.i" />
-    <None Include="..\..\common\managed_languages\class_directives\Function.i" />
-    <None Include="..\..\common\managed_languages\class_directives\NDArrayView.i" />
-    <None Include="..\..\common\managed_languages\class_directives\NDMask.i" />
-    <None Include="..\..\common\managed_languages\class_directives\NDShape.i" />
-    <None Include="..\..\common\managed_languages\class_directives\Value.i" />
-    <None Include="..\..\common\managed_languages\class_directives\Variable.i" />
-    <None Include="..\..\common\managed_languages\defines.i" />
-    <None Include="..\..\common\managed_languages\header.i" />
-    <None Include="..\..\common\managed_languages\ignores.i" />
-    <None Include="..\..\common\managed_languages\shared_ptrs.i" />
-    <None Include="..\..\common\managed_languages\templates.i" />
     <None Include="std_unordered_map.i" />
   </ItemGroup>
   <Target Name="CheckDependencies">

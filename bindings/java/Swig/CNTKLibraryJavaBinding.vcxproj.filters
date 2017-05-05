@@ -34,55 +34,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\common\managed_languages\array_mappings.i">
-      <Filter>Interface FIles</Filter>
-    </None>
     <None Include="..\..\common\CNTK_ExceptionHandling.i">
       <Filter>Interface FIles</Filter>
     </None>
     <None Include="..\..\common\CNTKValueExtend.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\defines.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\header.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\ignores.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_language_base.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\shared_ptrs.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\templates.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\class_directives\Axis.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\class_directives\DeviceDescriptor.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\class_directives\Function.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\class_directives\NDArrayView.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\class_directives\NDMask.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\class_directives\NDShape.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\class_directives\Value.i">
-      <Filter>Interface FIles</Filter>
-    </None>
-    <None Include="..\..\common\managed_languages\class_directives\Variable.i">
       <Filter>Interface FIles</Filter>
     </None>
     <None Include="std_unordered_map.i">
@@ -90,6 +45,9 @@
     </None>
     <None Include="..\JavaEvalTest\src\Main.java" />
     <None Include="generate-java-bindings.cmd" />
+    <None Include="..\..\common\CNTKManagedCommon.i">
+      <Filter>Interface FIles</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="cntk_java.i">
