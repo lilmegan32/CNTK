@@ -1,28 +1,55 @@
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+// cntk_java.i -- SWIG Interface file for Java
+//
+
 //JNI defines UNUSED macro as well, undefining it so it doesn't conflict with CNTK's
 %{
 #undef UNUSED
 %}
 
-%include "managed_languages/header.i"
-%include "managed_languages/shared_ptrs.i"
+%include "CNTKManagedCommon.i"
 
-%template(SizeTVector) std::vector<size_t>;
-%template(DoubleVector) std::vector<double>;
-%template(FloatVector) std::vector<float>;
-%template(VariableVector) std::vector<CNTK::Variable>;
-%template(AxisVector) std::vector<CNTK::Axis>;
-%template(NDArrayViewPtrVector) std::vector<std::shared_ptr<CNTK::NDArrayView>>;
-%template(BoolVector) std::vector<bool>;
-%template(DeviceDescriptorVector) std::vector<CNTK::DeviceDescriptor>;
-%include "managed_languages/templates.i"
+// %include "managed_languages/header.i"
+// %include "managed_languages/shared_ptrs.i"
+// %include "managed_languages/templates.i"
+// %include "managed_languages/defines.i"
+// %include "managed_languages/ignores.i"
+// %include "managed_languages/array_mappings.i"
+// %include "CNTK_ExceptionHandling.i"
+// %include "managed_languages/class_directives/DeviceDescriptor.i"
+// %include "managed_languages/class_directives/Axis.i"
+// %include "managed_languages/class_directives/Function.i"
 
-%include "managed_languages/defines.i"
-%include "managed_languages/ignores.i"
-%include "managed_languages/array_mappings.i"
+// Customize type mapping for modelBuffer, used by Load
+// template taken from various.i
+// %apply char* INPUT { char* modelBuffer }
+// %typemap(jni) (char* modelBuffer) "jbyteArray"
+// %typemap(jtype) (char* modelBuffer) "byte[]"
+// %typemap(jstype) (char* modelBuffer) "byte[]"
+// %typemap(in) (char* modelBuffer) {
+//   $1 = (char *) JCALL2(GetByteArrayElements, jenv, $input, 0); 
+//
+// }
 
-%include "CNTK_ExceptionHandling.i"
+// %typemap(argout) (char* modelBuffer) {
+//  JCALL3(ReleaseByteArrayElements, jenv, $input, (jbyte *) $1, 0);
+//}
 
-%include "managed_languages/class_directives/DeviceDescriptor.i"
+// %typemap(javain) (char* modelBuffer) "$javainput"
+
+/* Prevent default freearg typemap from being used */
+// %typemap(freearg) (char* modelBuffer) ""
+
+// %include "managed_languages/class_directives/Variable.i"
+// %include "managed_languages/class_directives/NDShape.i"
+// %include "managed_languages/class_directives/NDMask.i"
+// %include "managed_languages/class_directives/Value.i"
+// %include "managed_languages/class_directives/NDArrayView.i"
+
+
 %typemap(javacode) CNTK::DeviceDescriptor %{
 
     public java.util.ArrayList<DeviceDescriptor> getAllDevices() {
@@ -55,7 +82,7 @@
 
 %}
 
-%include "managed_languages/class_directives/Axis.i"
+
 %typemap(javacode) CNTK::Axis %{
 
     @Override
@@ -82,25 +109,6 @@
     }
 %}
 
-%include "managed_languages/class_directives/Function.i"
-// Customize type mapping for modelBuffer, used by Load
-// template taken from various.i
-%apply char* INPUT { char* modelBuffer }
-%typemap(jni) (char* modelBuffer) "jbyteArray"
-%typemap(jtype) (char* modelBuffer) "byte[]"
-%typemap(jstype) (char* modelBuffer) "byte[]"
-%typemap(in) (char* modelBuffer) {
-  $1 = (char *) JCALL2(GetByteArrayElements, jenv, $input, 0); 
-}
-
-%typemap(argout) (char* modelBuffer) {
-  JCALL3(ReleaseByteArrayElements, jenv, $input, (jbyte *) $1, 0);
-}
-
-%typemap(javain) (char* modelBuffer) "$javainput"
-
-/* Prevent default freearg typemap from being used */
-%typemap(freearg) (char* modelBuffer) ""
 
 %typemap(javacode) CNTK::Function %{
 
@@ -151,7 +159,7 @@
 
 %}
 
-%include "managed_languages/class_directives/Variable.i"
+
 %typemap(javacode) CNTK::Variable %{
 
     @Override
@@ -175,7 +183,6 @@
 
 %}
 
-%include "managed_languages/class_directives/NDShape.i"
 %typemap(javacode) CNTK::NDShape %{
 
     public java.util.ArrayList<Long> getDimensions(){
@@ -207,15 +214,12 @@
 
 %}
 
-%include "managed_languages/class_directives/NDMask.i"
 %typemap(javacode) CNTK::NDMask %{
 %}
 
-%include "managed_languages/class_directives/Value.i"
 %typemap(javacode) CNTK::Value %{
 %}
 
-%include "managed_languages/class_directives/NDArrayView.i"
 %typemap(javacode) CNTK::NDArrayView %{
 %}
 

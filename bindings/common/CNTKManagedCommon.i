@@ -385,16 +385,6 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
 %ignore_function CNTK::Axis::DefaultInputVariableDynamicAxes();
 %ignore_function CNTK::Axis::UnknownDynamicAxes();
 
-#ifdef SWIGCSHARP
-
-// Customize type mapping for modelBuffer, used by Load
-%apply char* INPUT { char* modelBuffer }
-%typemap(ctype) (char* modelBuffer) "char*"
-%typemap(imtype) (char* modelBuffer) "byte[]"
-%typemap(cstype) (char* modelBuffer) "byte[]"
-
-#endif
-
 %ignore CNTK::Function::BlockArgumentsMapping;
 %rename (GetName) CNTK::Function::Name;
 %rename (GetUid) CNTK::Function::Uid;
@@ -428,6 +418,37 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
         return CNTK::Function::Load(modelBuffer, length, computeDevice, nullptr);
     }
 }
+
+#ifdef SWIGCSHARP
+
+// Customize type mapping for modelBuffer, used by Load
+%apply char* INPUT { char* modelBuffer }
+%typemap(ctype) (char* modelBuffer) "char*"
+%typemap(imtype) (char* modelBuffer) "byte[]"
+%typemap(cstype) (char* modelBuffer) "byte[]"
+
+#endif  // SWIGCSHARP
+
+#ifdef SWIGJAVA
+
+// Customize type mapping for modelBuffer, used by Load
+// template taken from various.i
+%apply char* INPUT { char* modelBuffer }
+%typemap(jni) (char* modelBuffer) "jbyteArray"
+%typemap(jtype) (char* modelBuffer) "byte[]"
+%typemap(jstype) (char* modelBuffer) "byte[]"
+%typemap(in) (char* modelBuffer) {
+  $1 = (char *) JCALL2(GetByteArrayElements, jenv, $input, 0);
+}
+%typemap(argout) (char* modelBuffer) {
+  JCALL3(ReleaseByteArrayElements, jenv, $input, (jbyte *) $1, 0);
+}
+%typemap(javain) (char* modelBuffer) "$javainput"
+
+/* Prevent default freearg typemap from being used */
+%typemap(freearg) (char* modelBuffer) ""
+
+#endif  // SWIGJAVA
 
 %ignore CNTK::Variable::Variable;
 %rename ("%s") CNTK::Variable::Variable(const FunctionPtr& function);
