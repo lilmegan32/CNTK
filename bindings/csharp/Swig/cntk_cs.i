@@ -1,33 +1,41 @@
-%include "managed_languages/header.i"
-%include <arrays_csharp.i>
-%include "managed_languages/shared_ptrs.i"
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+// cntk_cs.i -- SWIG Interface file for C#
+//
 
-SWIG_STD_VECTOR_ENHANCED(size_t)
-%template(SizeTVector) std::vector<size_t>;
-SWIG_STD_VECTOR_ENHANCED(double)
-%template(DoubleVector) std::vector<double>;
-SWIG_STD_VECTOR_ENHANCED(float)
-%template(FloatVector) std::vector<float>;
-SWIG_STD_VECTOR_ENHANCED(CNTK::Variable)
-%template(VariableVector) std::vector<CNTK::Variable>;
-SWIG_STD_VECTOR_ENHANCED(CNTK::Axis)
-%template(AxisVector) std::vector<CNTK::Axis>;
-SWIG_STD_VECTOR_ENHANCED(std::shared_ptr<CNTK::NDArrayView>)
-%template(NDArrayViewPtrVector) std::vector<std::shared_ptr<CNTK::NDArrayView>>;
-SWIG_STD_VECTOR_ENHANCED(bool)
-%template(BoolVector) std::vector<bool>;
-SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
-%template(DeviceDescriptorVector) std::vector<CNTK::DeviceDescriptor>;
+%include "CNTKManagedCommon.i"
 
-%include "managed_languages/templates.i"
+// %include "managed_languages/header.i"
+// %include "managed_languages/shared_ptrs.i"
 
-%include "managed_languages/defines.i"
-%include "managed_languages/ignores.i"
-%include "managed_languages/array_mappings.i"
+// Customize type mapping for modelBuffer, used by Load
+// %apply char* INPUT { char* modelBuffer }
+// %typemap(ctype) (char* modelBuffer) "char*"
+// %typemap(imtype) (char* modelBuffer) "byte[]"
+// %typemap(cstype) (char* modelBuffer) "byte[]"
 
-%include "CNTK_ExceptionHandling.i"
+// %include "managed_languages/templates.i"
 
-%include "managed_languages/class_directives/DeviceDescriptor.i"
+// %include "managed_languages/defines.i"
+// %include "managed_languages/ignores.i"
+// %include "managed_languages/array_mappings.i"
+
+// %include "CNTK_ExceptionHandling.i"
+
+// %include "managed_languages/class_directives/DeviceDescriptor.i"
+// %include "managed_languages/class_directives/Axis.i"
+// %include "managed_languages/class_directives/Function.i"
+// %include "managed_languages/class_directives/Variable.i"
+// %include "managed_languages/class_directives/NDShape.i"
+// %include "managed_languages/class_directives/NDMask.i"
+// %include "managed_languages/class_directives/Value.i"
+// %include "CNTKValueExtend.i"
+// %include "managed_languages/class_directives/NDArrayView.i"
+
+// C# specific extenstion
+
 %typemap(cscode) CNTK::DeviceDescriptor %{
 
     public int Id
@@ -134,7 +142,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
     }
 %}
 
-%include "managed_languages/class_directives/Axis.i"
+
 %typemap(cscode) CNTK::Axis %{
 
     public string Name
@@ -236,13 +244,8 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
     }
 %}
 
-%include "managed_languages/class_directives/Function.i"
 
-// Customize type mapping for modelBuffer, used by Load
-%apply char* INPUT { char* modelBuffer }
-%typemap(ctype) (char* modelBuffer) "char*"
-%typemap(imtype) (char* modelBuffer) "byte[]"
-%typemap(cstype) (char* modelBuffer) "byte[]"
+
 
 %typemap(cscode) CNTK::Function %{
 
@@ -408,7 +411,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
     }
 %}
 
-%include "managed_languages/class_directives/Variable.i"
+
 
 %typemap(cscode) CNTK::Variable %{
 
@@ -540,7 +543,6 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
     }
 %}
 
-%include "managed_languages/class_directives/NDShape.i"
 %typemap(cscode) CNTK::NDShape %{
 
     public NDShape(int numAxes, int dimension) : this((uint)numAxes, (uint)dimension)
@@ -699,7 +701,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
     public static readonly int FreeDimension = -3;
 %}
 
-%include "managed_languages/class_directives/NDMask.i"
+
 %typemap(cscode) CNTK::NDMask %{
     public void InvalidateSection(System.Collections.Generic.IEnumerable<int> sectionOffset, NDShape sectionShape) {
         var offsetVector = AsSizeTVector(sectionOffset);
@@ -743,7 +745,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
     }
 %}
 
-%include "managed_languages/class_directives/Value.i"
+
 %typemap(cscode) CNTK::Value %{
 
     public DeviceDescriptor Device
@@ -1346,8 +1348,7 @@ SWIG_STD_VECTOR_ENHANCED(CNTK::DeviceDescriptor)
     }
 %}
 
-%include "CNTKValueExtend.i"
-%include "managed_languages/class_directives/NDArrayView.i"
+
 %typemap(cscode) CNTK::NDArrayView %{
     public NDArrayView(NDShape viewShape, float[] dataBuffer, DeviceDescriptor device, bool readOnly = false) : this(viewShape, dataBuffer, (uint)dataBuffer.Length, device, readOnly)
     {

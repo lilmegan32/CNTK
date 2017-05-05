@@ -6,4 +6,3 @@
 %shared_ptr(CNTK::NDArrayView);
 %shared_ptr(CNTK::NDMask);
 %shared_ptr(std::vector<float>);
-

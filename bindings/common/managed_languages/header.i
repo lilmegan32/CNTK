@@ -12,6 +12,10 @@
 #include <exception.i>
 %include "std_unordered_map.i"
 
+#ifdef SWIGCSHARP
+%include <arrays_csharp.i>
+#endif
+
 %{
     #include "CNTKLibrary.h"
     #pragma warning(disable : 4100)
