@@ -571,8 +571,8 @@ do
                 jdk_path=$(find_jdk)
                 if test x$jdk_path = x
                 then
-                    echo "Cannot find Java JDK directory."
-                    echo "Please specify a value for --with-swig"
+                    echo "Cannot find JDK directory."
+                    echo "Please specify a value for --with-jdk"
                     exit 1
                 fi
             else
@@ -580,7 +580,7 @@ do
                 then
                     jdk_path=$optarg
                 else
-                    echo "Invalid Java JDK directory $optarg"
+                    echo "Invalid JDK directory $optarg"
                     exit 1
                 fi
             fi
