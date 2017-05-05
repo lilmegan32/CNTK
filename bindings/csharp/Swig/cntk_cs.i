@@ -7,37 +7,8 @@
 
 %include "CNTKManagedCommon.i"
 
-// %include "managed_languages/header.i"
-// %include "managed_languages/shared_ptrs.i"
-
-// Customize type mapping for modelBuffer, used by Load
-// %apply char* INPUT { char* modelBuffer }
-// %typemap(ctype) (char* modelBuffer) "char*"
-// %typemap(imtype) (char* modelBuffer) "byte[]"
-// %typemap(cstype) (char* modelBuffer) "byte[]"
-
-// %include "managed_languages/templates.i"
-
-// %include "managed_languages/defines.i"
-// %include "managed_languages/ignores.i"
-// %include "managed_languages/array_mappings.i"
-
-// %include "CNTK_ExceptionHandling.i"
-
-// %include "managed_languages/class_directives/DeviceDescriptor.i"
-// %include "managed_languages/class_directives/Axis.i"
-// %include "managed_languages/class_directives/Function.i"
-// %include "managed_languages/class_directives/Variable.i"
-// %include "managed_languages/class_directives/NDShape.i"
-// %include "managed_languages/class_directives/NDMask.i"
-// %include "managed_languages/class_directives/Value.i"
-// %include "CNTKValueExtend.i"
-// %include "managed_languages/class_directives/NDArrayView.i"
-
 // C# specific extenstion
-
 %typemap(cscode) CNTK::DeviceDescriptor %{
-
     public int Id
     {
         get { return (int)GetId(); }
@@ -144,7 +115,6 @@
 
 
 %typemap(cscode) CNTK::Axis %{
-
     public string Name
     {
         get 
@@ -244,11 +214,7 @@
     }
 %}
 
-
-
-
 %typemap(cscode) CNTK::Function %{
-
     public static Function Load(byte[] modelBuffer, DeviceDescriptor computeDevice)
     {
         return Load(modelBuffer, (uint)modelBuffer.Length, computeDevice);
@@ -411,10 +377,7 @@
     }
 %}
 
-
-
 %typemap(cscode) CNTK::Variable %{
-
     public NDShape Shape
     {
         get { return GetShape(); }
@@ -544,7 +507,6 @@
 %}
 
 %typemap(cscode) CNTK::NDShape %{
-
     public NDShape(int numAxes, int dimension) : this((uint)numAxes, (uint)dimension)
     {
         if (numAxes < 0 || dimension < 0)
@@ -701,7 +663,6 @@
     public static readonly int FreeDimension = -3;
 %}
 
-
 %typemap(cscode) CNTK::NDMask %{
     public void InvalidateSection(System.Collections.Generic.IEnumerable<int> sectionOffset, NDShape sectionShape) {
         var offsetVector = AsSizeTVector(sectionOffset);
@@ -745,9 +706,7 @@
     }
 %}
 
-
 %typemap(cscode) CNTK::Value %{
-
     public DeviceDescriptor Device
     {
         get
@@ -1348,7 +1307,6 @@
     }
 %}
 
-
 %typemap(cscode) CNTK::NDArrayView %{
     public NDArrayView(NDShape viewShape, float[] dataBuffer, DeviceDescriptor device, bool readOnly = false) : this(viewShape, dataBuffer, (uint)dataBuffer.Length, device, readOnly)
     {
@@ -1456,4 +1414,3 @@
 
 %include "CNTKLibraryInternals.h"
 %include "CNTKLibrary.h"
-
